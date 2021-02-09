@@ -1,7 +1,7 @@
 # ao-concepts logging module
 
 ![CI](https://github.com/ao-concepts/logging/workflows/CI/badge.svg)
-[![codecov](https://codecov.io/gh/ao-concepts/logging/branch/master/graph/badge.svg?token=AQVUZTRGQS)](https://codecov.io/gh/ao-concepts/logging)
+[![codecov](https://codecov.io/gh/ao-concepts/logging/branch/main/graph/badge.svg?token=AQVUZTRGQS)](https://codecov.io/gh/ao-concepts/logging)
 
 This module provides a logger that fits for use within the ao-concepts ecosystem.
 
