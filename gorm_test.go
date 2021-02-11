@@ -11,59 +11,55 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-type writer struct {
-	Logs []string
-}
-
-func (w *writer) Write(p []byte) (n int, err error) {
-	w.Logs = append(w.Logs, string(p))
-	return len(p), nil
-}
-
 func TestCreateGormLogger(t *testing.T) {
 	assert := assert.New(t)
 
-	w := writer{}
-	l := logging.New(logging.Debug, &w)
-
-	gl := l.CreateGormLogger()
-
 	// logMode
+	l := logging.New(logging.Debug, nil)
+	gl := l.CreateGormLogger()
 	assert.NotNil(gl.LogMode(logger.Info))
 
 	// info
-	gl.Info(context.Background(), "%s", "info")
-	assert.Len(w.Logs, 1)
-	assert.Equal("{\"level\":\"info\",\"message\":\"info\"}\n", w.Logs[0])
+	testMessage(assert, func(log logging.Logger) {
+		gl := log.CreateGormLogger()
+		gl.Info(context.Background(), "%s", "info")
+	}, "info")
 
 	// warn
-	gl.Warn(context.Background(), "%s", "warn")
-	assert.Len(w.Logs, 2)
-	assert.Equal("{\"level\":\"warn\",\"message\":\"warn\"}\n", w.Logs[1])
+	testMessage(assert, func(log logging.Logger) {
+		gl := log.CreateGormLogger()
+		gl.Warn(context.Background(), "%s", "warn")
+	}, "warn")
 
-	// error
-	gl.Error(context.Background(), "%s", "error")
-	assert.Len(w.Logs, 3)
-	assert.Equal("{\"level\":\"error\",\"message\":\"error\"}\n", w.Logs[2])
+	// // error
+	testMessage(assert, func(log logging.Logger) {
+		gl := log.CreateGormLogger()
+		gl.Error(context.Background(), "%s", "error")
+	}, "error")
 
 	// trace error
-	gl.Trace(context.Background(), time.Now(), func() (string, int64) {
-		return "", 0
-	}, fmt.Errorf("trace"))
-	assert.Len(w.Logs, 4)
-	assert.Equal("{\"level\":\"error\",\"error\":\"trace\",\"message\":\"trace\"}\n", w.Logs[3])
+	testMessage(assert, func(log logging.Logger) {
+		gl := log.CreateGormLogger()
+		gl.Trace(context.Background(), time.Now(), func() (string, int64) {
+			return "", 0
+		}, fmt.Errorf("error"))
+	}, "error")
 
 	// trace 0 rows
+	w := &writer{}
+	log := logging.New(logging.Debug, w)
+	glog := log.CreateGormLogger()
+
 	before := time.Now()
 	time.Sleep(5 * time.Millisecond)
-	gl.Trace(context.Background(), before, func() (string, int64) {
+	glog.Trace(context.Background(), before, func() (string, int64) {
 		return "value", 0
 	}, nil)
-	assert.Len(w.Logs, 5)
+	assert.Len(w.Logs, 1)
 
 	time.Sleep(5 * time.Millisecond)
-	gl.Trace(context.Background(), before, func() (string, int64) {
+	glog.Trace(context.Background(), before, func() (string, int64) {
 		return "value", -1
 	}, nil)
-	assert.Len(w.Logs, 6)
+	assert.Len(w.Logs, 2)
 }

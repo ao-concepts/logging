@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 
 	"github.com/rs/zerolog"
 	"gorm.io/gorm/logger"
@@ -81,67 +82,67 @@ type DefaultLogger struct {
 
 // Fatal log something at fatal level. This will panic!
 func (l *DefaultLogger) Fatal(s string, args ...interface{}) {
-	l.log.Panic().Msg(fmt.Sprintf(s, args...))
+	l.log.Panic().Time("time", time.Now()).Msg(fmt.Sprintf(s, args...))
 }
 
 // ErrFatal log an error at fatal level. This will panic!
 func (l *DefaultLogger) ErrFatal(err error) {
-	l.log.Panic().Stack().Err(err).Msg(err.Error())
+	l.log.Panic().Time("time", time.Now()).Msg(err.Error())
 }
 
 // Error log something at error level
 func (l *DefaultLogger) Error(s string, args ...interface{}) {
 	if l.level <= Error {
-		l.log.Error().Msg(fmt.Sprintf(s, args...))
+		l.log.Error().Time("time", time.Now()).Msg(fmt.Sprintf(s, args...))
 	}
 }
 
 // ErrError log an error at error level
 func (l *DefaultLogger) ErrError(err error) {
 	if l.level <= Error {
-		l.log.Error().Stack().Err(err).Msg(err.Error())
+		l.log.Error().Time("time", time.Now()).Msg(err.Error())
 	}
 }
 
 // Warn log something at warning level
 func (l *DefaultLogger) Warn(s string, args ...interface{}) {
 	if l.level <= Warn {
-		l.log.Warn().Msg(fmt.Sprintf(s, args...))
+		l.log.Warn().Time("time", time.Now()).Msg(fmt.Sprintf(s, args...))
 	}
 }
 
 // ErrWarn log an error at warning level
 func (l *DefaultLogger) ErrWarn(err error) {
 	if l.level <= Warn {
-		l.log.Warn().Stack().Err(err).Msg(err.Error())
+		l.log.Warn().Time("time", time.Now()).Msg(err.Error())
 	}
 }
 
 // Info log something at info level
 func (l *DefaultLogger) Info(s string, args ...interface{}) {
 	if l.level <= Info {
-		l.log.Info().Msg(fmt.Sprintf(s, args...))
+		l.log.Info().Time("time", time.Now()).Msg(fmt.Sprintf(s, args...))
 	}
 }
 
 // ErrInfo log an error at info level
 func (l *DefaultLogger) ErrInfo(err error) {
 	if l.level <= Info {
-		l.log.Info().Stack().Err(err).Msg(err.Error())
+		l.log.Info().Time("time", time.Now()).Msg(err.Error())
 	}
 }
 
 // Debug log something at debug level
 func (l *DefaultLogger) Debug(s string, args ...interface{}) {
 	if l.level <= Debug {
-		l.log.Debug().Msg(fmt.Sprintf(s, args...))
+		l.log.Debug().Time("time", time.Now()).Msg(fmt.Sprintf(s, args...))
 	}
 }
 
 // ErrDebug log an error at debug level
 func (l *DefaultLogger) ErrDebug(err error) {
 	if l.level <= Debug {
-		l.log.Debug().Stack().Err(err).Msg(err.Error())
+		l.log.Debug().Time("time", time.Now()).Msg(err.Error())
 	}
 }
 
@@ -152,9 +153,10 @@ func (l *DefaultLogger) CreateGormLogger() logger.Interface {
 	}
 }
 
-// Write data to the logger.
+// Write data to the logger (debug level is used)
 func (l *DefaultLogger) Write(p []byte) (n int, err error) {
-	return l.log.Write(p)
+	l.log.Debug().Time("time", time.Now()).Msg(string(p))
+	return len(p), nil
 }
 
 // GetLevel returns the current error level
