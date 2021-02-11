@@ -1,3 +1,8 @@
+# 0.0.3
+
+*   (improvement) Change `write` function log level to `info`
+
+
 # 0.0.2
 
 *   (bug) Add missing time to logs

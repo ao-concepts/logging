@@ -112,7 +112,7 @@ func TestLogger(t *testing.T) {
 	var msg logMessage
 
 	assert.Nil(json.Unmarshal([]byte(w.Logs[0]), &msg))
-	assert.Equal("debug", msg.Level)
+	assert.Equal("info", msg.Level)
 	assert.Equal("write-test", msg.Message)
 }
 

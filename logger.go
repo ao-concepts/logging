@@ -153,9 +153,9 @@ func (l *DefaultLogger) CreateGormLogger() logger.Interface {
 	}
 }
 
-// Write data to the logger (debug level is used)
+// Write data to the logger (info level is used)
 func (l *DefaultLogger) Write(p []byte) (n int, err error) {
-	l.log.Debug().Time("time", time.Now()).Msg(string(p))
+	l.log.Info().Time("time", time.Now()).Msg(string(p))
 	return len(p), nil
 }
 
