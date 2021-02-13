@@ -47,7 +47,7 @@ type Logger interface {
 // Uses os.Stdout if the writer parameter is nil.
 func New(level Level, writer io.Writer) Logger {
 	if writer == nil {
-		writer = os.Stdout
+		writer = zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
 	}
 
 	zerolog.SetGlobalLevel(getZerologLevel(level))

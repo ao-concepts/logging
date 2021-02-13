@@ -1,3 +1,8 @@
+# 0.0.4
+
+*   (internal) Use `zerolog.ConsoleWriter` as default log writer.
+
+
 # 0.0.3
 
 *   (improvement) Change `write` function log level to `info`
